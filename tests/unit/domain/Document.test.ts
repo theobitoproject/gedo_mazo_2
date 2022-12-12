@@ -6,6 +6,6 @@ describe('Document', () => {
     const doc = new Document(id)
 
     expect(doc).toBeInstanceOf(Document)
-    expect(doc.docId).toBe(id)
+    expect(doc.id).toBe(id)
   })
 })
