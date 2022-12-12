@@ -1,0 +1,89 @@
+openapi: 3.0.2
+info:
+  title: Gedō Mazō API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/
+paths:
+  /docs/generate/from-template:
+    post:
+      summary: clones a google doc template and merge text into the copy
+      operationId: generateFromTemplate
+      requestBody:
+        $ref: '#/components/requestBodies/GenerateFromTemplate'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  requestBodies:
+    GenerateFromTemplate:
+      description: >
+        a JSON object that contains the ID of the template and
+        the data that will be merged
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data_to_merge
+              - document_id
+            properties:
+              data_to_merge:
+                $ref: '#/components/schemas/DataToMerge'
+              document_id:
+                $ref: '#/components/schemas/DocumentId'
+
+  responses:
+    NoContent:
+      description: successful response with no content
+
+    BadRequest:
+      description: Wrong parameters sent
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    DataToMerge:
+      type: object
+
+    DocumentId:
+      type: string
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
