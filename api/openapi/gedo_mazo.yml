@@ -8,7 +8,7 @@ paths:
   /docs/generate/from-template:
     post:
       summary: clones a google doc template and merge text into the copy
-      operationId: generateFromTemplate
+      operationId: generateDocumentFromTemplate
       requestBody:
         $ref: '#/components/requestBodies/GenerateFromTemplate'
       responses:
