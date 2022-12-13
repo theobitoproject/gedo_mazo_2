@@ -1,17 +1,47 @@
-import express, { Request, RequestHandler, Response } from 'express'
-import { json } from 'body-parser'
+import { join } from 'path'
+import { promises as fsPromises } from 'fs'
 
-const app = express()
+import express, { json } from 'express'
+import { google } from 'googleapis'
 
-app.use(json())
+import { Application as GedoMazoApplication } from './app/Application'
+import { Auther } from './app/FileStorage'
+import { FileStorage as GoogleFileStorage } from './adapters/google/FileStorage'
+import { handleError } from './middlewares'
+import { HttpServer } from './ports/http'
 
-const home: RequestHandler = (req: Request, res: Response) => {
-  const msg = 'hello from express with typescript, con cambio 2'
-  console.log(req.params.id)
-  console.log(msg)
-  return res.status(200).json({ message: msg })
+const temporalAuther: Auther = {
+  async getAuth(): Promise<object> {
+    try {
+      const token = join(__dirname, 'token.json')
+      const content = await fsPromises.readFile(token)
+      const credentials = JSON.parse(content.toString())
+      return google.auth.fromJSON(credentials)
+    } catch (err) {
+      return {
+        err,
+      }
+    }
+  },
 }
 
-app.get('/', home)
+const fileStorage: GoogleFileStorage = new GoogleFileStorage()
+
+const gedoMazoApplication: GedoMazoApplication = new GedoMazoApplication(
+  temporalAuther,
+  fileStorage
+)
+
+const httpServer: HttpServer = new HttpServer(gedoMazoApplication)
+
+const app = express()
+app.use(json())
+
+app.post(
+  '/docs/generate/from-template',
+  httpServer.generateDocumentFromTemplate
+)
+
+app.use(handleError)
 
 app.listen(8000)

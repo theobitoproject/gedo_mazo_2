@@ -35,11 +35,14 @@ components:
             required:
               - data_to_merge
               - document_id
+              - folder_id
             properties:
               data_to_merge:
                 $ref: '#/components/schemas/DataToMerge'
               document_id:
                 $ref: '#/components/schemas/DocumentId'
+              folder_id:
+                $ref: '#/components/schemas/FolderId'
 
   responses:
     NoContent:
@@ -78,6 +81,9 @@ components:
       type: object
 
     DocumentId:
+      type: string
+
+    FolderId:
       type: string
 
     Error:

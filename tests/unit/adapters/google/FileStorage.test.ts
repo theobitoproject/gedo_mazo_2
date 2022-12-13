@@ -40,8 +40,8 @@ describe('FileStorage', () => {
     document: new Document('document'),
     folder: new Folder('folder'),
     auther: {
-      getAuth(): object {
-        return {}
+      getAuth(): Promise<object> {
+        return new Promise((resolve) => resolve({}))
       },
     },
     dataToMerge: {

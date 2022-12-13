@@ -8,7 +8,7 @@ export interface Auther {
   // to authenticate/authorize requests to the file storage.
   // It returns an object since the each file storage will expect a different
   // auth type (string token, a specific type of instance, etc)
-  getAuth(): object
+  getAuth(): Promise<object>
 }
 
 // FileStorage defines a handler to access and manage files

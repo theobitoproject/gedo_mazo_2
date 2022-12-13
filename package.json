@@ -4,9 +4,9 @@
   "description": "create documents from templates",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node-esm' ./src/app.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node-esm' ./src/index.ts",
     "build": "tsc",
-    "prod": "npm run build && node ./dist/app.js",
+    "prod": "npm run build && node ./dist/index.js",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch"
   },

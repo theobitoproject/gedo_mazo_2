@@ -17,7 +17,7 @@ export class FileStorage {
     folder: Folder,
     auther: Auther
   ): Promise<Document> {
-    const googleAuth = <GoogleAuth>auther.getAuth()
+    const googleAuth = <GoogleAuth>await auther.getAuth()
     const drive = google.drive({ version: 'v3', auth: googleAuth })
 
     const res = await drive.files.copy({
@@ -39,7 +39,7 @@ export class FileStorage {
     data: DataToMerge,
     auther: Auther
   ): Promise<void> {
-    const googleAuth = <GoogleAuth>auther.getAuth()
+    const googleAuth = <GoogleAuth>await auther.getAuth()
     const docs = google.docs({ version: 'v1', auth: googleAuth })
 
     return new Promise((resolve, reject) => {
@@ -49,8 +49,10 @@ export class FileStorage {
           requestBody: { requests: this.getReplaceTextRequests(data) },
         },
         (err) => {
-          if (err) return reject(err)
-          resolve()
+          if (err) {
+            return reject(err)
+          }
+          return resolve()
         }
       )
     })
@@ -75,7 +77,7 @@ export class FileStorage {
         requests.push({
           replaceAllText: {
             containsText: {
-              text: `'{{${key}}}'`,
+              text: `{{${key}}}`,
               matchCase: true,
             },
             replaceText: String(value),
