@@ -1,11 +1,13 @@
 import { Application } from '../../../src/app/Application'
 import { DataToMerge } from '../../../src/domain/DataToMerge'
 import { Document } from '../../../src/domain/Document'
-import { FileStorage } from '../../../src/app/FileStorage'
+import { Auther, FileStorage } from '../../../src/app/FileStorage'
 import { Folder } from '../../../src/domain/Folder'
 
 describe('Application', () => {
   let app: Application
+
+  let auther: Auther
   let fileStorage: FileStorage
 
   const testData = {
@@ -21,31 +23,36 @@ describe('Application', () => {
     return new Document(`${document.id}_${folder.id}`)
   }
 
+  const getAuthMock: jest.MockedFunction<() => object> = jest.fn()
+
   const cloneDocumentMock: jest.MockedFunction<
-    (document: Document, folder: Folder) => Document
+    (document: Document, folder: Folder) => Promise<Document>
   > = jest
     .fn()
-    .mockImplementation(
-      (document: Document, folder: Folder): Document =>
-        getClonedDocument(document, folder)
+    .mockResolvedValue(
+      getClonedDocument(testData.templateDoc, testData.outputFolder)
     )
 
   const mergeDataIntoDocumentMock: jest.MockedFunction<
-    (document: Document, data: DataToMerge) => void
+    (document: Document, data: DataToMerge) => Promise<void>
   > = jest.fn()
 
   beforeEach(() => {
+    auther = {
+      getAuth: getAuthMock,
+    }
+
     fileStorage = {
       cloneDocument: cloneDocumentMock,
       mergeDataIntoDocument: mergeDataIntoDocumentMock,
     }
 
-    app = new Application(fileStorage)
+    app = new Application(auther, fileStorage)
   })
 
   describe('generateDocumentFromTemplate', () => {
-    beforeEach(() => {
-      app.generateDocumentFromTemplate(
+    beforeEach(async () => {
+      await app.generateDocumentFromTemplate(
         testData.templateDoc,
         testData.outputFolder,
         testData.dataToMerge
@@ -55,14 +62,16 @@ describe('Application', () => {
     it('should clone document', () => {
       expect(fileStorage.cloneDocument).toHaveBeenCalledWith(
         testData.templateDoc,
-        testData.outputFolder
+        testData.outputFolder,
+        auther
       )
     })
 
     it('should merge data into the document', () => {
       expect(fileStorage.mergeDataIntoDocument).toHaveBeenCalledWith(
         getClonedDocument(testData.templateDoc, testData.outputFolder),
-        testData.dataToMerge
+        testData.dataToMerge,
+        auther
       )
     })
   })
