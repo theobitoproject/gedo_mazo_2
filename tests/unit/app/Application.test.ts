@@ -10,7 +10,11 @@ describe('Application', () => {
   let auther: Auther
   let fileStorage: FileStorage
 
-  const testData = {
+  const testData: {
+    templateDoc: Document
+    outputFolder: Folder
+    dataToMerge: DataToMerge
+  } = {
     templateDoc: new Document('template_doc'),
     outputFolder: new Folder('output_folder'),
     dataToMerge: {

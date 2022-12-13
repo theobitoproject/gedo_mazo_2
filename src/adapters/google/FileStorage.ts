@@ -42,16 +42,18 @@ export class FileStorage {
     const googleAuth = <GoogleAuth>auther.getAuth()
     const docs = google.docs({ version: 'v1', auth: googleAuth })
 
-    docs.documents.batchUpdate(
-      {
-        documentId: document.id,
-        requestBody: { requests: this.getReplaceTextRequests(data) },
-      },
-      (err, resp) => {
-        if (err) return console.log('The API returned an error: ' + err)
-        console.log(resp)
-      }
-    )
+    return new Promise((resolve, reject) => {
+      docs.documents.batchUpdate(
+        {
+          documentId: document.id,
+          requestBody: { requests: this.getReplaceTextRequests(data) },
+        },
+        (err) => {
+          if (err) return reject(err)
+          resolve()
+        }
+      )
+    })
   }
 
   private getDocumentName(): string {

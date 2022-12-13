@@ -7,7 +7,8 @@
     "dev": "nodemon --watch './**/*.ts' --exec 'ts-node-esm' ./src/app.ts",
     "build": "tsc",
     "prod": "npm run build && node ./dist/app.js",
-    "test": "jest"
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
